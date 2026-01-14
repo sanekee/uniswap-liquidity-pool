@@ -32,3 +32,11 @@ deploy-hook:
 		--broadcast \
 		--sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
 		--account test-wallet
+
+
+create-pool:
+	forge script script/01_CreatePoolAndAddLiquidity.s.sol \
+		--rpc-url http://localhost:8545 \
+		--broadcast \
+		--sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
+		--account test-wallet
