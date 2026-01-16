@@ -22,12 +22,11 @@ contract BaseScript is Script, Deployers {
     /////////////////////////////////////
     // --- Configure These ---
     /////////////////////////////////////
-    IERC20 internal constant token0 =
-        IERC20(0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9);
-    IERC20 internal constant token1 =
-        IERC20(0x5FC8d32690cc91D4c39d9d3abcBD16989F875707);
-    IHooks constant hookContract =
-        IHooks(address(0xd3019d7fCB25D820E9d0c34FF3e007AB64bC8aC0));
+    // IERC20 internal constant token0 = IERC20(0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9);
+    address internal constant token0 = address(0);
+    address internal constant token1 = 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707;
+    IHooks constant hookContract = IHooks(address(0xd3019d7fCB25D820E9d0c34FF3e007AB64bC8aC0));
+
     /////////////////////////////////////
 
     Currency immutable currency0;
@@ -54,17 +53,7 @@ contract BaseScript is Script, Deployers {
 
     function _etch(address target, bytes memory bytecode) internal override {
         if (block.chainid == 31337) {
-            vm.rpc(
-                "anvil_setCode",
-                string.concat(
-                    '["',
-                    vm.toString(target),
-                    '",',
-                    '"',
-                    vm.toString(bytecode),
-                    '"]'
-                )
-            );
+            vm.rpc("anvil_setCode", string.concat('["', vm.toString(target), '",', '"', vm.toString(bytecode), '"]'));
         } else {
             revert("Unsupported etch on this network");
         }
@@ -73,16 +62,10 @@ contract BaseScript is Script, Deployers {
     function getCurrencies() internal pure returns (Currency, Currency) {
         require(address(token0) != address(token1));
 
-        if (token0 < token1) {
-            return (
-                Currency.wrap(address(token0)),
-                Currency.wrap(address(token1))
-            );
+        if (address(token0) < address(token1)) {
+            return (Currency.wrap(address(token0)), Currency.wrap(address(token1)));
         } else {
-            return (
-                Currency.wrap(address(token1)),
-                Currency.wrap(address(token0))
-            );
+            return (Currency.wrap(address(token1)), Currency.wrap(address(token0)));
         }
     }
 

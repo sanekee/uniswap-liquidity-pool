@@ -6,6 +6,7 @@ import {CurrencyLibrary, Currency} from "@uniswap/v4-core/src/types/Currency.sol
 import {Actions} from "@uniswap/v4-periphery/src/libraries/Actions.sol";
 
 import {BaseScript} from "./BaseScript.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract LiquidityHelpers is BaseScript {
     using CurrencyLibrary for Currency;
@@ -35,12 +36,12 @@ contract LiquidityHelpers is BaseScript {
 
     function tokenApprovals() public {
         if (!currency0.isAddressZero()) {
-            token0.approve(address(permit2), type(uint256).max);
+            IERC20(token0).approve(address(permit2), type(uint256).max);
             permit2.approve(address(token0), address(positionManager), type(uint160).max, type(uint48).max);
         }
 
         if (!currency1.isAddressZero()) {
-            token1.approve(address(permit2), type(uint256).max);
+            IERC20(token1).approve(address(permit2), type(uint256).max);
             permit2.approve(address(token1), address(positionManager), type(uint160).max, type(uint48).max);
         }
     }

@@ -26,6 +26,13 @@ deploy-v4:
 		--sender ${TEST_ADDRESS_0} \
 		--account test-wallet-0
 
+deploy-tokens:
+	forge script script/00_DeployTestToken.s.sol \
+		--rpc-url ${RPC_URL} \
+		--broadcast \
+		--sender ${TEST_ADDRESS_0} \
+		--account test-wallet-0
+
 deploy-hook:
 	forge script script/00_DeployHook.s.sol \
 		--rpc-url ${RPC_URL} \
@@ -33,10 +40,25 @@ deploy-hook:
 		--sender ${TEST_ADDRESS_0} \
 		--account test-wallet-0
 
-
 create-pool:
 	forge script script/01_CreatePoolAndAddLiquidity.s.sol \
 		--rpc-url ${RPC_URL} \
 		--broadcast \
 		--sender ${TEST_ADDRESS_0} \
 		--account test-wallet-0
+
+add-liquidity:
+	forge script script/02_AddLiquidity.s.sol \
+		--rpc-url ${RPC_URL} \
+		--broadcast \
+		--sender ${TEST_ADDRESS_0} \
+		--account test-wallet-0 \
+		-vvvv
+
+swap:
+	forge script script/03_Swap.s.sol \
+		--rpc-url ${RPC_URL} \
+		--broadcast \
+		--sender ${TEST_ADDRESS_0} \
+		--account test-wallet-0 \
+		-vvvv
