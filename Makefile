@@ -21,22 +21,22 @@ anvil:
 
 deploy-v4:
 	forge script script/testing/00_DeployV4.s.sol \
-		--rpc-url http://localhost:8545 \
+		--rpc-url ${RPC_URL} \
 		--broadcast \
-		--sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
-		--account test-wallet
+		--sender ${TEST_ADDRESS_0} \
+		--account test-wallet-0
 
 deploy-hook:
 	forge script script/00_DeployHook.s.sol \
-		--rpc-url http://localhost:8545 \
+		--rpc-url ${RPC_URL} \
 		--broadcast \
-		--sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
-		--account test-wallet
+		--sender ${TEST_ADDRESS_0} \
+		--account test-wallet-0
 
 
 create-pool:
 	forge script script/01_CreatePoolAndAddLiquidity.s.sol \
-		--rpc-url http://localhost:8545 \
+		--rpc-url ${RPC_URL} \
 		--broadcast \
-		--sender 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 \
-		--account test-wallet
+		--sender ${TEST_ADDRESS_0} \
+		--account test-wallet-0

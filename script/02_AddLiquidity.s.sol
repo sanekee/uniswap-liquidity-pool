@@ -11,6 +11,10 @@ import {StateLibrary} from "@uniswap/v4-core/src/libraries/StateLibrary.sol";
 import {BaseScript} from "./base/BaseScript.sol";
 import {LiquidityHelpers} from "./base/LiquidityHelpers.sol";
 
+import {IPoolManager} from "@uniswap/v4-core/src/interfaces/IPoolManager.sol";
+
+import {IPositionManager} from "@uniswap/v4-periphery/src/interfaces/IPositionManager.sol";
+
 contract AddLiquidityScript is BaseScript, LiquidityHelpers {
     using CurrencyLibrary for Currency;
     using StateLibrary for IPoolManager;
@@ -32,6 +36,11 @@ contract AddLiquidityScript is BaseScript, LiquidityHelpers {
     int24 tickUpper;
 
     function run() external {
+        poolManager = IPoolManager(0x0D9BAf34817Fccd3b3068768E5d20542B66424A5);
+        positionManager = IPositionManager(
+            0x90aAE8e3C8dF1d226431D0C2C7feAaa775fAF86C
+        );
+
         PoolKey memory poolKey = PoolKey({
             currency0: currency0,
             currency1: currency1,
@@ -41,12 +50,18 @@ contract AddLiquidityScript is BaseScript, LiquidityHelpers {
         });
         bytes memory hookData = new bytes(0);
 
-        (uint160 sqrtPriceX96,,,) = poolManager.getSlot0(poolKey.toId());
+        (uint160 sqrtPriceX96, , , ) = poolManager.getSlot0(poolKey.toId());
 
         int24 currentTick = TickMath.getTickAtSqrtPrice(sqrtPriceX96);
 
-        tickLower = truncateTickSpacing((currentTick - 1000 * tickSpacing), tickSpacing);
-        tickUpper = truncateTickSpacing((currentTick + 1000 * tickSpacing), tickSpacing);
+        tickLower = truncateTickSpacing(
+            (currentTick - 1000 * tickSpacing),
+            tickSpacing
+        );
+        tickUpper = truncateTickSpacing(
+            (currentTick + 1000 * tickSpacing),
+            tickSpacing
+        );
 
         // Converts token amounts to liquidity units
         uint128 liquidity = LiquidityAmounts.getLiquidityForAmounts(
@@ -61,16 +76,28 @@ contract AddLiquidityScript is BaseScript, LiquidityHelpers {
         uint256 amount0Max = token0Amount + 1 wei;
         uint256 amount1Max = token1Amount + 1 wei;
 
-        (bytes memory actions, bytes[] memory mintParams) = _mintLiquidityParams(
-            poolKey, tickLower, tickUpper, liquidity, amount0Max, amount1Max, deployerAddress, hookData
-        );
+        (
+            bytes memory actions,
+            bytes[] memory mintParams
+        ) = _mintLiquidityParams(
+                poolKey,
+                tickLower,
+                tickUpper,
+                liquidity,
+                amount0Max,
+                amount1Max,
+                deployerAddress,
+                hookData
+            );
 
         // multicall parameters
         bytes[] memory params = new bytes[](1);
 
         // Mint Liquidity
         params[0] = abi.encodeWithSelector(
-            positionManager.modifyLiquidities.selector, abi.encode(actions, mintParams), block.timestamp + 60
+            positionManager.modifyLiquidities.selector,
+            abi.encode(actions, mintParams),
+            block.timestamp + 60
         );
 
         // If the pool is an ETH pair, native tokens are to be transferred
