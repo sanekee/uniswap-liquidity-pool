@@ -41,14 +41,15 @@ contract SwapScript is BaseScript {
 
         // Execute swap
         swapRouter.swapExactTokensForTokens({
-            amountIn: 100000,
+            amountIn: 1_000,
             amountOutMin: 0, // Very bad, but we want to allow for unlimited price impact
             zeroForOne: true,
             poolKey: poolKey,
             hookData: hookData,
             // receiver: address(this),
             receiver: msg.sender,
-            deadline: block.timestamp + 30
+            // deadline: block.timestamp + 30
+            deadline: type(uint256).max
         });
 
         vm.stopBroadcast();
